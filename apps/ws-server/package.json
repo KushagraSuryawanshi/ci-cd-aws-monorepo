@@ -1,0 +1,27 @@
+{
+  "name": "ws-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node dist/app.js",
+    "dev": "pnpm build && pnpm start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.0.1",
+    "@types/ws": "^8.18.1",
+    "epxress": "^0.0.1-security",
+    "ws": "^8.21.0"
+  },
+  "dependencies": {
+    "@repo/db": "workspace:*",
+    "dotenv": "^17.4.2"
+  }
+}
