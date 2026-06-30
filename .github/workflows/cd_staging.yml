@@ -1,14 +1,22 @@
 name: Deploy to staging
+
 on:
   push:
     branches:
-      - "main"
+      - main
 
 jobs:
-  redeploy_everything:
-    name: Deploying codebase to staging instance
+  test-staging-ssh:
+    runs-on: ubuntu-latest
 
     steps:
-      name: SSH into staging server
+      - name: Prepare SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{secrets.EC2_SSH_PRIVATE_KEY}}" >> ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh -keyscan -H "${{secrets.STAGING_HOST}}" >> ~/.ssh/known_hosts
 
-
+      - name: Test SSH connectin
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{secrets.STAGING_USER}}@${{secrets.STAGING_HOST}} "cd ${{secrets.STAGING_APP_DIR}} && pwd && hostname"
