@@ -1,0 +1,14 @@
+name: Deploy to staging
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  redeploy_everything:
+    name: Deploying codebase to staging instance
+
+    steps:
+      name: SSH into staging server
+
+
