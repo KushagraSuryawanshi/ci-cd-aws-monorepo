@@ -44,3 +44,53 @@ jobs:
             
             git rev-parse --short HEAD
           '
+
+      - name: Install dependencies on staging
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{secrets.STAGING_USER}}@${{secrets.STAGING_HOST}} '
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+            cd ${{ secrets.STAGING_APP_DIR }}
+
+            pnpm install --frozen-lockfile
+          '
+
+      - name: Run Prisma on staging
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} '
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+            cd ${{ secrets.STAGING_APP_DIR }}
+
+            pnpm --filter @repo/db db:generate
+            pnpm --filter @repo/db db:deploy
+          '
+
+      - name: Build app on staging
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} '
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+            cd ${{ secrets.STAGING_APP_DIR }}
+
+            pnpm run build
+          '
+      
+      - name: Restarting staging services
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} '
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+            pm2 restart http-server --update-env
+            pm2 restart ws-server --update-env
+            pm2 restart fe-server --update-env
+
+            pm2 ls
+          '
+      - name: Health check staging
+        run: |
+          curl -f http://staging.ci-cd-aws-monorepo-http.kushagrasuryawanshi.com
+          curl -f -I http://staging.ci-cd-aws-monorepo-fe.kushagrasuryawanshi.com
