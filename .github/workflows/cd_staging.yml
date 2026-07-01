@@ -33,3 +33,14 @@ jobs:
             pnpm -v
             pm2 -v
           '
+
+      - name: Sync latest code on staging
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{secrets.STAGING_USER}}@${{secrets.STAGING_HOST}} '
+            cd ${{secrets.STAGING_APP_DIR}}
+
+            git fetch origin main
+            git reset --hard origin/main
+            
+            git rev-parse --short HEAD
+          '
