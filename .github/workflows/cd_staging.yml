@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy to staging:
+  deploy-staging:
     runs-on: ubuntu-latest
 
     steps:
