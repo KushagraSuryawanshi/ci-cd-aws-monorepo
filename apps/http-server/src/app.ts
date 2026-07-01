@@ -6,7 +6,11 @@ const app = express();
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("hey there");
+  res.json({
+    service: "http-server",
+    status: "running",
+    message: "API is running on port 3000",
+  });
 });
 
 app.post("/signup", async (req: Request, res: Response) => {
