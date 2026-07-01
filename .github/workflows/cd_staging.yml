@@ -13,10 +13,14 @@ jobs:
       - name: Prepare SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{secrets.EC2_SSH_PRIVATE_KEY}}" >> ~/.ssh/deploy_key
+          echo "${{secrets.EC2_SSH_PRIVATE_KEY}}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H "${{secrets.STAGING_HOST}}" >> ~/.ssh/known_hosts
 
-      - name: Test SSH connectin
+      - name: Test SSH connection
         run: |
           ssh -i ~/.ssh/deploy_key ${{secrets.STAGING_USER}}@${{secrets.STAGING_HOST}} "cd ${{secrets.STAGING_APP_DIR}} && pwd && hostname"
+
+      - name: Check remote runtime
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{secrets.STAGING_USER}}@${{secrets.STAGING_HOST}} "cd ${{secrets.STAGING_APP_DIR}} && node -v && pnpm -v && pm2 -v"
