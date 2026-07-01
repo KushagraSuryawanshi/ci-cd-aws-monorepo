@@ -23,4 +23,13 @@ jobs:
 
       - name: Check remote runtime
         run: |
-          ssh -i ~/.ssh/deploy_key ${{secrets.STAGING_USER}}@${{secrets.STAGING_HOST}} "cd ${{secrets.STAGING_APP_DIR}} && node -v && pnpm -v && pm2 -v"
+          ssh -i ~/.ssh/deploy_key ${{secrets.STAGING_USER}}@${{secrets.STAGING_HOST}} '
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+            cd ${{ secrets.STAGING_APP_DIR }}
+
+            node -v
+            pnpm -v
+            pm2 -v
+          '
