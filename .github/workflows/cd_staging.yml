@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  test-staging-ssh:
+  deploy to staging:
     runs-on: ubuntu-latest
 
     steps:
@@ -93,5 +93,5 @@ jobs:
           '
       - name: Health check staging
         run: |
-          curl -f http://staging.ci-cd-aws-monorepo-http.kushagrasuryawanshi.com
-          curl -f -I http://staging.ci-cd-aws-monorepo-fe.kushagrasuryawanshi.com
+          curl -f --retry 10 --retry-delay 3 --retry-connrefused http://staging.ci-cd-aws-monorepo-http.kushagrasuryawanshi.com
+          curl -f -I --retry 10 --retry-delay 3 --retry-connrefused http://staging.ci-cd-aws-monorepo-fe.kushagrasuryawanshi.com
